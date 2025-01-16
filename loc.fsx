@@ -109,7 +109,7 @@ module Analyzer =
 module Report =
     let writePythonDictionary (file:string) items =
         use writer = new StreamWriter(file)
-        writer.WriteLine("data = {")
+        writer.WriteLine("DATA  = {")
         
         items
         |> Seq.iter (fun (key, value) -> writer.WriteLine(sprintf "\t\"%s\": %i," key value))
