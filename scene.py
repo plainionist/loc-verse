@@ -2,7 +2,7 @@ import bpy
 import random
 import math
 
-data = {
+DATA = {
     "Mail": 2301,
     "JobCreator": 2754,
     "JobReadinessChecker": 2841,
