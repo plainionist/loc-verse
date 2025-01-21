@@ -1,22 +1,23 @@
 import bpy
 import random
 import math
+import importlib.util
 
-DATA = {
-    "Mail": 2301,
-    "JobCreator": 2754,
-    "JobReadinessChecker": 2841,
-    "InfraFailureAnalysis": 5033,
-    "Orchestrator": 5058,
-    "DropLocationScanner": 8977,
-    "TestFailureAnalysis": 12174,
-}
+def load_data_file(path):
+    spec = importlib.util.spec_from_file_location("data", path)
+    data_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(data_module)
+    return data_module.data
+
+
+DATA = load_data_file("./data.py")
 
 SCALE_FACTOR = 2
 FRAME_PAUSE = 24
 FRAME_MOVE = 36
 DEFAULT_SEGMENTS = 64
 DEFAULT_RING_COUNT = 32
+BACKGROUND_IMAGE_PATH = "c:/images/stars-background.jpg"
 
 
 def clear_scene():
@@ -180,6 +181,13 @@ def setup_background(image_path, x_position):
 
     plane.data.materials.append(material)
 
+def format_value(value):
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.1f}M"
+    elif value >= 1_000:
+        return f"{value / 1_000:.1f}K"
+    else:
+        return str(value)
 
 clear_scene()
 
@@ -196,11 +204,11 @@ for name, value in DATA.items():
 
     sphere = add_sphere(name, scale, (x_position, 0, 0))
     add_text((sphere.location[0], sphere.location[1], sphere.location[2] + scale * 1.35), name, scale, is_emissive=True)
-    add_text((sphere.location[0], sphere.location[1], sphere.location[2] - scale * 1.3), f"{value} LoC", scale, is_emissive=True)
+    add_text((sphere.location[0], sphere.location[1], sphere.location[2] - scale * 1.3), f"{format_value(value)} LoC", scale, is_emissive=True)
 
     spheres.append(sphere)
 
 camera = create_camera(spheres)
 create_lights(spheres, camera)
-setup_background("c:/images/stars-background.jpg", x_position)
+setup_background(BACKGROUND_IMAGE_PATH, x_position)
 animate_camera(camera, spheres)
