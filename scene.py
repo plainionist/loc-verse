@@ -7,7 +7,7 @@ def load_data_file(path):
     spec = importlib.util.spec_from_file_location("data", path)
     data_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(data_module)
-    return data_module.data
+    return data_module.DATA
 
 
 DATA = load_data_file("./data.py")
@@ -183,9 +183,11 @@ def setup_background(image_path, x_position):
 
 def format_value(value):
     if value >= 1_000_000:
-        return f"{value / 1_000_000:.1f}M"
+        result = value / 1_000_000
+        return f"{result:.0f}M" if result.is_integer() else f"{result:.2f}M"
     elif value >= 1_000:
-        return f"{value / 1_000:.1f}K"
+        result = value / 1_000
+        return f"{result:.0f}K" if result.is_integer() else f"{result:.2f}K"
     else:
         return str(value)
 
